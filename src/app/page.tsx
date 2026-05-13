@@ -6,6 +6,8 @@ import { treeToText } from "@/utils/treeToText";
 import { FileNode } from "@/types/fileNode";
 import PromptPreview from "./components/PromptPreview";
 import SearchBar from "@/components/SearchBar";
+import FolderTabs from "./components/FolderTabs";
+import FileExplorer from "./components/FileExplorer";
 
 export default function Home() {
   const [path, setPath] = useState("");
@@ -46,45 +48,17 @@ export default function Home() {
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
       <div className="mx-auto max-w-7xl p-6">
         <h1 className="mb-6 text-3xl font-bold">RepoContext</h1>
+
         <SearchBar onScan={handleScan} isLoading={loading} />
 
-        {rootFolders.length > 0 && (
-          <div className="mt-6">
-            <h2 className="mb-2 text-sm text-zinc-400">Folders</h2>
+        <FolderTabs
+          folders={rootFolders}
+          selectedFolder={selectedFolder}
+          onSelectFolder={setSelectedFolder}
+        />
 
-            <div className="flex flex-wrap gap-2">
-              {rootFolders.map((folder) => (
-                <button
-                  key={folder.path}
-                  onClick={() => setSelectedFolder(folder)}
-                  className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
-                    selectedFolder?.path === folder.path
-                      ? "border-zinc-100 bg-zinc-100 text-zinc-950"
-                      : "border-zinc-800 bg-zinc-900 hover:bg-zinc-800"
-                  } `}
-                >
-                  📁 {folder.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="mt-6 grid grid-cols-2 gap-6">
-          <div>
-            <h2 className="mb-2 text-sm text-zinc-400">Explorer</h2>
-
-            <div className="h-[700px] overflow-auto rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-              {selectedFolder ? (
-                <FileTree nodes={[selectedFolder]} />
-              ) : (
-                <div className="text-sm text-zinc-500">
-                  Nenhuma pasta selecionada
-                </div>
-              )}
-            </div>
-          </div>
-
+        <div className="mt-6 grid h-[calc(100vh-320px)] min-h-[500px] grid-cols-1 gap-6 md:grid-cols-2">
+          <FileExplorer selectedFolder={selectedFolder} />
           <PromptPreview selectedFolder={selectedFolder} />
         </div>
       </div>

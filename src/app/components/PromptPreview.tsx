@@ -20,7 +20,7 @@ export default function PromptPreview({ selectedFolder }: PromptPreviewProps) {
   }
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full min-h-0 flex-col">
       <div className="mb-2 flex items-center justify-between">
         <h2 className="text-sm text-zinc-400">Prompt Preview</h2>
         <button
