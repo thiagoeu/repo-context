@@ -1,4 +1,4 @@
-import { FileNode } from "../types/file";
+import { FileNode } from "../types/fileNode";
 
 export function buildTree(files: File[]): FileNode[] {
   const root: FileNode[] = [];
