@@ -1,18 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import FileTree from "@/components/FileTree";
-import { treeToText } from "@/utils/treeToText";
+import {
+  FolderTabs,
+  PromptPreview,
+  SearchBar,
+  FileExplorer,
+} from "@/components";
 import { FileNode } from "@/types/fileNode";
-import PromptPreview from "./components/PromptPreview";
-import SearchBar from "@/components/SearchBar";
-import FolderTabs from "./components/FolderTabs";
-import FileExplorer from "./components/FileExplorer";
 
 export default function Home() {
-  const [path, setPath] = useState("");
   const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [fileContent, setFileContent] = useState<string | null>(null);
   const [tree, setTree] = useState<FileNode[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<FileNode | null>(null);
 
@@ -40,6 +39,31 @@ export default function Home() {
     }
   }
 
+  async function handleFileSelect(node: FileNode) {
+    // Se for uma pasta, a gente ignora ou limpa o preview
+    if (node.type === "folder") {
+      setFileContent(null);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/file", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filePath: node.path }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.error);
+
+      setFileContent(data.content); // Salva o texto do arquivo no estado
+    } catch (error: any) {
+      console.error("Erro ao ler arquivo:", error);
+      alert("Não foi possível ler o arquivo.");
+    }
+  }
+
   const rootFolders = useMemo(() => {
     return tree.filter((node) => node.type === "folder");
   }, [tree]);
@@ -58,8 +82,14 @@ export default function Home() {
         />
 
         <div className="mt-6 grid h-[calc(100vh-320px)] min-h-[500px] grid-cols-1 gap-6 md:grid-cols-2">
-          <FileExplorer selectedFolder={selectedFolder} />
-          <PromptPreview selectedFolder={selectedFolder} />
+          <FileExplorer
+            selectedFolder={selectedFolder}
+            onFileSelect={handleFileSelect}
+          />
+          <PromptPreview
+            selectedFolder={selectedFolder}
+            fileContent={fileContent}
+          />
         </div>
       </div>
     </main>

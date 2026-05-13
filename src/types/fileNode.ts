@@ -7,6 +7,7 @@ export interface FileNode {
 
 export const ignoredFolders = [
   "node_modules",
+  "package-lock.json",
   ".git",
   ".next",
   "dist",

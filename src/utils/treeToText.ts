@@ -1,4 +1,4 @@
-import { FileNode } from "@/types/fileNode";
+import { FileNode } from "../types/fileNode";
 
 export function treeToText(nodes: FileNode[], prefix = ""): string {
   let result = "";

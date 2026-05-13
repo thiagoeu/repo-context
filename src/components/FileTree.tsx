@@ -2,27 +2,29 @@
 
 import { useState } from "react";
 import { ChevronRight, ChevronDown, File, Folder } from "lucide-react";
-import type { FileNode } from "@/types/fileNode";
+import type { FileNode } from "../types/fileNode";
 
 interface IFileTreeProps {
   nodes: FileNode[];
+  onNodeClick: (node: FileNode) => void;
 }
 
-const FileTreeNode = ({ node }: { node: FileNode }) => {
+// 1. Adicionamos onNodeClick nas props do componente interno
+const FileTreeNode = ({
+  node,
+  onNodeClick,
+}: {
+  node: FileNode;
+  onNodeClick: (node: FileNode) => void;
+}) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const hasChildren =
     node.type === "folder" && node.children && node.children.length > 0;
 
   const sortedChildren = [...(node.children || [])].sort((a, b) => {
-    if (a.type === "folder" && b.type === "file") {
-      return -1;
-    }
-
-    if (a.type === "file" && b.type === "folder") {
-      return 1;
-    }
-
+    if (a.type === "folder" && b.type === "file") return -1;
+    if (a.type === "file" && b.type === "folder") return 1;
     return a.name.localeCompare(b.name);
   });
 
@@ -31,9 +33,12 @@ const FileTreeNode = ({ node }: { node: FileNode }) => {
       <div
         className="group flex cursor-pointer items-center gap-1 rounded px-1.5 py-0.5 transition-colors duration-150 hover:bg-zinc-900"
         onClick={() => {
+          // 2. Se for pasta, alterna o estado de aberto/fechado
           if (node.type === "folder") {
             setIsOpen(!isOpen);
           }
+          // 3. Dispara a função de clique (que na Home vai buscar o arquivo)
+          onNodeClick(node);
         }}
       >
         <div className="flex h-4 w-4 items-center justify-center text-zinc-500">
@@ -60,7 +65,11 @@ const FileTreeNode = ({ node }: { node: FileNode }) => {
       {isOpen && hasChildren && (
         <div className="ml-3 border-l border-zinc-800 pl-2">
           {sortedChildren.map((child, index) => (
-            <FileTreeNode key={`${child.path}-${index}`} node={child} />
+            <FileTreeNode
+              key={`${child.path}-${index}`}
+              node={child}
+              onNodeClick={onNodeClick} // 4. Passa a função recursivamente
+            />
           ))}
         </div>
       )}
@@ -68,7 +77,7 @@ const FileTreeNode = ({ node }: { node: FileNode }) => {
   );
 };
 
-export default function FileTree({ nodes }: IFileTreeProps) {
+export default function FileTree({ nodes, onNodeClick }: IFileTreeProps) {
   if (!nodes || nodes.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-zinc-800 bg-zinc-950 p-4 text-sm text-zinc-500 italic">
@@ -78,21 +87,19 @@ export default function FileTree({ nodes }: IFileTreeProps) {
   }
 
   const sortedNodes = [...nodes].sort((a, b) => {
-    if (a.type === "folder" && b.type === "file") {
-      return -1;
-    }
-
-    if (a.type === "file" && b.type === "folder") {
-      return 1;
-    }
-
+    if (a.type === "folder" && b.type === "file") return -1;
+    if (a.type === "file" && b.type === "folder") return 1;
     return a.name.localeCompare(b.name);
   });
 
   return (
     <div className="space-y-0.5 overflow-auto rounded-lg border border-zinc-800 bg-zinc-950 p-3">
       {sortedNodes.map((node, index) => (
-        <FileTreeNode key={`${node.path}-${index}`} node={node} />
+        <FileTreeNode
+          key={`${node.path}-${index}`}
+          node={node}
+          onNodeClick={onNodeClick} // 5. Inicia a passagem da função
+        />
       ))}
     </div>
   );

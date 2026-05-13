@@ -1,6 +1,6 @@
 "use client";
 
-import { FileNode } from "@/types/fileNode";
+import { FileNode } from "../types/fileNode";
 
 interface FolderTabsProps {
   folders: FileNode[];
