@@ -29,35 +29,14 @@ const FileTreeNode = ({ node }: { node: FileNode }) => {
   return (
     <div className="select-none">
       <div
-        className="
-          flex
-          items-center
-          gap-1
-          py-0.5
-          px-1.5
-          rounded
-          hover:bg-zinc-900
-          cursor-pointer
-          transition-colors
-          duration-150
-          group
-        "
+        className="group flex cursor-pointer items-center gap-1 rounded px-1.5 py-0.5 transition-colors duration-150 hover:bg-zinc-900"
         onClick={() => {
           if (node.type === "folder") {
             setIsOpen(!isOpen);
           }
         }}
       >
-        <div
-          className="
-            w-4
-            h-4
-            flex
-            items-center
-            justify-center
-            text-zinc-500
-          "
-        >
+        <div className="flex h-4 w-4 items-center justify-center text-zinc-500">
           {node.type === "folder" ? (
             isOpen ? (
               <ChevronDown size={12} />
@@ -69,44 +48,17 @@ const FileTreeNode = ({ node }: { node: FileNode }) => {
 
         <div>
           {node.type === "folder" ? (
-            <Folder
-              className="
-                w-4
-                h-4
-                text-amber-400
-              "
-            />
+            <Folder className="h-4 w-4 text-amber-400" />
           ) : (
-            <File
-              className="
-                w-4
-                h-4
-                text-blue-400
-              "
-            />
+            <File className="h-4 w-4 text-blue-400" />
           )}
         </div>
 
-        <span
-          className="
-            text-[13px]
-            font-mono
-            text-zinc-300
-          "
-        >
-          {node.name}
-        </span>
+        <span className="font-mono text-[13px] text-zinc-300">{node.name}</span>
       </div>
 
       {isOpen && hasChildren && (
-        <div
-          className="
-            ml-3
-            pl-2
-            border-l
-            border-zinc-800
-          "
-        >
+        <div className="ml-3 border-l border-zinc-800 pl-2">
           {sortedChildren.map((child, index) => (
             <FileTreeNode key={`${child.path}-${index}`} node={child} />
           ))}
@@ -119,19 +71,7 @@ const FileTreeNode = ({ node }: { node: FileNode }) => {
 export default function FileTree({ nodes }: IFileTreeProps) {
   if (!nodes || nodes.length === 0) {
     return (
-      <div
-        className="
-          text-sm
-          text-zinc-500
-          italic
-          p-4
-          border
-          border-dashed
-          border-zinc-800
-          rounded-lg
-          bg-zinc-950
-        "
-      >
+      <div className="rounded-lg border border-dashed border-zinc-800 bg-zinc-950 p-4 text-sm text-zinc-500 italic">
         Nenhum arquivo ou diretório encontrado.
       </div>
     );
@@ -150,17 +90,7 @@ export default function FileTree({ nodes }: IFileTreeProps) {
   });
 
   return (
-    <div
-      className="
-        space-y-0.5
-        bg-zinc-950
-        p-3
-        rounded-lg
-        border
-        border-zinc-800
-        overflow-auto
-      "
-    >
+    <div className="space-y-0.5 overflow-auto rounded-lg border border-zinc-800 bg-zinc-950 p-3">
       {sortedNodes.map((node, index) => (
         <FileTreeNode key={`${node.path}-${index}`} node={node} />
       ))}
