@@ -1,9 +1,4 @@
-interface FileNode {
-  name: string;
-  path: string;
-  type: "file" | "folder";
-  children?: FileNode[];
-}
+import { FileNode } from "@/types/fileNode";
 
 export function treeToText(nodes: FileNode[], prefix = ""): string {
   let result = "";
