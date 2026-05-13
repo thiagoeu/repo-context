@@ -1,10 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-
-import FileTree from "./components/FileTree";
-import { treeToText } from "./utils/treeToText";
-import type { FileNode } from "@/types/fileNode";
+import FileTree from "@/components/FileTree";
+import { treeToText } from "@/utils/treeToText";
+import { FileNode } from "@/types/fileNode";
 
 export default function Home() {
   const [path, setPath] = useState("");
@@ -52,8 +51,8 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
-      <div className="max-w-7xl mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-6">RepoContext</h1>
+      <div className="mx-auto max-w-7xl p-6">
+        <h1 className="mb-6 text-3xl font-bold">RepoContext</h1>
 
         <div className="flex gap-2">
           <input
@@ -61,31 +60,12 @@ export default function Home() {
             placeholder="C:/projects/my-app"
             value={path}
             onChange={(e) => setPath(e.target.value)}
-            className="
-              w-full
-              bg-zinc-900
-              border
-              border-zinc-800
-              rounded-lg
-              px-4
-              py-2
-              outline-none
-              focus:border-zinc-600
-            "
+            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 outline-none focus:border-zinc-600"
           />
 
           <button
             onClick={handleScan}
-            className="
-              px-5
-              py-2
-              rounded-lg
-              bg-zinc-100
-              text-zinc-950
-              font-medium
-              hover:bg-white
-              transition-colors
-            "
+            className="rounded-lg bg-zinc-100 px-5 py-2 font-medium text-zinc-950 transition-colors hover:bg-white"
           >
             Scan
           </button>
@@ -93,26 +73,18 @@ export default function Home() {
 
         {rootFolders.length > 0 && (
           <div className="mt-6">
-            <h2 className="text-sm text-zinc-400 mb-2">Folders</h2>
+            <h2 className="mb-2 text-sm text-zinc-400">Folders</h2>
 
             <div className="flex flex-wrap gap-2">
               {rootFolders.map((folder) => (
                 <button
                   key={folder.path}
                   onClick={() => setSelectedFolder(folder)}
-                  className={`
-                    px-3
-                    py-1.5
-                    rounded-md
-                    border
-                    text-sm
-                    transition-colors
-                    ${
-                      selectedFolder?.path === folder.path
-                        ? "bg-zinc-100 text-zinc-950 border-zinc-100"
-                        : "bg-zinc-900 border-zinc-800 hover:bg-zinc-800"
-                    }
-                  `}
+                  className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
+                    selectedFolder?.path === folder.path
+                      ? "border-zinc-100 bg-zinc-100 text-zinc-950"
+                      : "border-zinc-800 bg-zinc-900 hover:bg-zinc-800"
+                  } `}
                 >
                   📁 {folder.name}
                 </button>
@@ -121,25 +93,15 @@ export default function Home() {
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-6 mt-6">
+        <div className="mt-6 grid grid-cols-2 gap-6">
           <div>
-            <h2 className="text-sm text-zinc-400 mb-2">Explorer</h2>
+            <h2 className="mb-2 text-sm text-zinc-400">Explorer</h2>
 
-            <div
-              className="
-                h-[700px]
-                overflow-auto
-                rounded-xl
-                border
-                border-zinc-800
-                bg-zinc-900
-                p-4
-              "
-            >
+            <div className="h-[700px] overflow-auto rounded-xl border border-zinc-800 bg-zinc-900 p-4">
               {selectedFolder ? (
                 <FileTree nodes={[selectedFolder]} />
               ) : (
-                <div className="text-zinc-500 text-sm">
+                <div className="text-sm text-zinc-500">
                   Nenhuma pasta selecionada
                 </div>
               )}
@@ -147,7 +109,7 @@ export default function Home() {
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2 flex items-center justify-between">
               <h2 className="text-sm text-zinc-400">Prompt Preview</h2>
 
               <button
@@ -156,35 +118,13 @@ export default function Home() {
                     selectedFolder ? treeToText([selectedFolder]) : "",
                   );
                 }}
-                className="
-                  text-xs
-                  px-3
-                  py-1
-                  rounded
-                  bg-zinc-800
-                  hover:bg-zinc-700
-                  transition-colors
-                "
+                className="rounded bg-zinc-800 px-3 py-1 text-xs transition-colors hover:bg-zinc-700"
               >
                 Copy
               </button>
             </div>
 
-            <pre
-              className="
-                h-[700px]
-                overflow-auto
-                rounded-xl
-                border
-                border-zinc-800
-                bg-black
-                p-4
-                text-sm
-                font-mono
-                text-zinc-300
-                whitespace-pre-wrap
-              "
-            >
+            <pre className="h-[700px] overflow-auto rounded-xl border border-zinc-800 bg-black p-4 font-mono text-sm whitespace-pre-wrap text-zinc-300">
               {selectedFolder
                 ? treeToText([selectedFolder])
                 : "Nenhuma pasta selecionada"}

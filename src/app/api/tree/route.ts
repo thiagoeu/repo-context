@@ -1,23 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-
 import fs from "fs";
 import path from "path";
-
-interface FileNode {
-  name: string;
-  path: string;
-  type: "file" | "folder";
-  children?: FileNode[];
-}
-
-const ignoredFolders = [
-  "node_modules",
-  ".git",
-  ".next",
-  "dist",
-  "build",
-  "coverage",
-];
+import { FileNode, ignoredFolders } from "@/types/fileNode";
 
 function scanDirectory(dirPath: string): FileNode[] {
   const entries = fs.readdirSync(dirPath, {
@@ -55,7 +39,6 @@ function scanDirectory(dirPath: string): FileNode[] {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-
     const { dirPath } = body;
 
     if (!dirPath) {
