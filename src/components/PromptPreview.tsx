@@ -1,65 +1,44 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { cleanCode } from "../utils/treeToText";
+import { cleanCode, treeToText } from "../utils/treeToText";
 import { FileNode } from "../types/fileNode";
 import { Hash, Zap } from "lucide-react";
+import { generatePrompt } from "@/utils/generatePrompt";
+import { generateStats } from "@/utils/generateStats";
+import { calculateSavings } from "@/utils/calculateSavings";
 
 interface PromptPreviewProps {
   selectedFiles: FileNode[];
+  selectedFolder: FileNode | null;
 }
 
-export default function PromptPreview({ selectedFiles }: PromptPreviewProps) {
+export default function PromptPreview({
+  selectedFiles,
+  selectedFolder,
+}: PromptPreviewProps) {
   const [copied, setCopied] = useState(false);
   const [viewMode, setViewMode] = useState<"preview" | "optimized">(
     "optimized",
   );
 
   const displayContent = useMemo(() => {
-    if (selectedFiles.length === 0) return "";
-
-    return selectedFiles
-      .map((file) => {
-        const content = file.content || "";
-        if (viewMode === "optimized") {
-          const cleaned = cleanCode(content);
-          return `<file path="${file.path}">\n${cleaned}\n</file>`;
-        }
-        return `--- FILE: ${file.path} ---\n${content}\n`;
-      })
-      .join("\n\n");
-  }, [selectedFiles, viewMode]);
+    return generatePrompt({
+      selectedFiles,
+      selectedFolder,
+      viewMode,
+    });
+  }, [selectedFiles, selectedFolder, viewMode]);
 
   const stats = useMemo(() => {
-    const totalChars = displayContent.length;
-    // Estimativa de tokens (média de 4 caracteres por token)
-    const totalTokens = Math.ceil(totalChars / 4);
-
-    return {
-      chars: totalChars.toLocaleString(),
-      tokens: totalTokens.toLocaleString(),
+    return generateStats({
+      content: displayContent,
       fileCount: selectedFiles.length,
-    };
+    });
   }, [displayContent, selectedFiles.length]);
 
   const savings = useMemo(() => {
-    if (selectedFiles.length === 0) return null;
-
-    const normalChars = selectedFiles.reduce(
-      (acc, file) => acc + (file.content?.length || 0) + 20, // 20 chars for header
-      0,
-    );
-
-    const optimizedChars = selectedFiles.reduce((acc, file) => {
-      const cleaned = cleanCode(file.content || "");
-      return acc + cleaned.length + 30; // 30 chars for <file> tags
-    }, 0);
-
-    const diff = normalChars - optimizedChars;
-    const percentage =
-      normalChars > 0 ? Math.max(0, Math.round((diff / normalChars) * 100)) : 0;
-
-    return { percentage, diff: Math.max(0, Math.ceil(diff / 4)) };
+    return calculateSavings(selectedFiles);
   }, [selectedFiles]);
 
   async function handleCopy() {
@@ -76,7 +55,7 @@ export default function PromptPreview({ selectedFiles }: PromptPreviewProps) {
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-3">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-h-[38px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="text-sm font-semibold tracking-tight text-zinc-200">
             Prompt Preview

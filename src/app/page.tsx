@@ -13,11 +13,8 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [tree, setTree] = useState<FileNode[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<FileNode | null>(null);
-
-  // ESTADO DE MÚLTIPLOS ARQUIVOS
   const [selectedFiles, setSelectedFiles] = useState<FileNode[]>([]);
 
-  // Memo para extrair apenas os paths para o FileTree
   const selectedPaths = useMemo(
     () => selectedFiles.map((f) => f.path),
     [selectedFiles],
@@ -47,13 +44,11 @@ export default function Home() {
   async function handleFileSelect(node: FileNode) {
     if (node.type === "folder") return;
 
-    // Se já estiver selecionado, removemos da lista
     if (selectedPaths.includes(node.path)) {
       setSelectedFiles((prev) => prev.filter((f) => f.path !== node.path));
       return;
     }
 
-    // Se não estiver, buscamos o conteúdo e adicionamos à lista
     try {
       const response = await fetch("/api/file", {
         method: "POST",
@@ -92,7 +87,6 @@ export default function Home() {
 
     setLoading(true);
     try {
-      // Filtramos arquivos que já temos o conteúdo para evitar re-fetch desnecessário
       const filesToFetch = allFiles.filter(
         (f) => !selectedFiles.find((sf) => sf.path === f.path && sf.content),
       );
@@ -109,7 +103,6 @@ export default function Home() {
         }),
       );
 
-      // Combinamos com os arquivos que já tínhamos selecionados ou que já tinham conteúdo
       setSelectedFiles((prev) => {
         const newFiles = [...prev];
         allFiles.forEach((file) => {
@@ -123,8 +116,6 @@ export default function Home() {
               newFiles.push(fetched);
             }
           } else if (!alreadyExists) {
-            // Se não precisou de fetch mas não estava na lista, adicionamos o objeto do allFiles
-            // (assumindo que ele já tinha conteúdo ou será preenchido)
             newFiles.push(file);
           }
         });
@@ -154,8 +145,7 @@ export default function Home() {
           onSelectFolder={setSelectedFolder}
         />
 
-        <div className="mt-6 grid h-[600px] grid-cols-1 gap-6 md:grid-cols-2">
-          {/* FileExplorer agora precisa conhecer os paths selecionados */}
+        <div className="mt-6 grid h-[calc(100vh-320px)] min-h-[500px] grid-cols-1 gap-6 md:grid-cols-2">
           <FileExplorer
             selectedFolder={selectedFolder}
             onFileSelect={handleFileSelect}
@@ -164,8 +154,10 @@ export default function Home() {
             onClearAll={handleClearAll}
           />
 
-          {/* PromptPreview agora recebe a lista completa de objetos selecionados */}
-          <PromptPreview selectedFiles={selectedFiles} />
+          <PromptPreview
+            selectedFiles={selectedFiles}
+            selectedFolder={selectedFolder}
+          />
         </div>
       </div>
     </main>

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import FileTree from '@/components/FileTree';
-import { FileNode } from '@/types/fileNode';
+import FileTree from "@/components/FileTree";
+import { FileNode } from "@/types/fileNode";
 
-import { CheckSquare, Trash2 } from 'lucide-react';
+import { CheckSquare, Trash2 } from "lucide-react";
 
 interface FileExplorerProps {
   selectedFolder: FileNode | null;
@@ -21,9 +21,11 @@ export default function FileExplorer({
   onClearAll,
 }: FileExplorerProps) {
   return (
-    <div className="flex h-full min-h-0 flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium tracking-wide text-zinc-400">Explorer</h2>
+    <div className="flex h-full min-h-0 flex-col gap-3">
+      <div className="flex h-[38px] items-center justify-between">
+        <h2 className="text-sm font-semibold tracking-tight text-zinc-200">
+          Explorer
+        </h2>
 
         {selectedFolder && (
           <div className="flex items-center gap-1">
@@ -50,7 +52,7 @@ export default function FileExplorer({
         )}
       </div>
 
-      <div className="flex-1 scrollbar-thin scrollbar-thumb-zinc-700 overflow-auto rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
+      <div className="flex-1 scrollbar-thin scrollbar-thumb-zinc-700 overflow-auto rounded-xl border border-zinc-800 bg-zinc-900/50 p-5">
         {selectedFolder ? (
           <FileTree
             nodes={[selectedFolder]}
@@ -60,7 +62,9 @@ export default function FileExplorer({
         ) : (
           <div className="flex h-full flex-col items-center justify-center gap-2 text-zinc-500 italic">
             <span className="text-2xl">📂</span>
-            <p className="text-sm">Selecione uma pasta para visualizar a árvore</p>
+            <p className="text-sm">
+              Selecione uma pasta para visualizar a árvore
+            </p>
           </div>
         )}
       </div>
