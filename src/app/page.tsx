@@ -14,6 +14,7 @@ export default function Home() {
   const [fileContent, setFileContent] = useState<string | null>(null);
   const [tree, setTree] = useState<FileNode[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<FileNode | null>(null);
+  const [selectedFilePath, setSelectedFilePath] = useState<string | null>(null);
 
   async function handleScan(path: string) {
     if (!path.trim()) return alert("Digite um caminho");
@@ -40,9 +41,9 @@ export default function Home() {
   }
 
   async function handleFileSelect(node: FileNode) {
-    // Se for uma pasta, a gente ignora ou limpa o preview
     if (node.type === "folder") {
       setFileContent(null);
+      setSelectedFilePath(null);
       return;
     }
 
@@ -57,7 +58,8 @@ export default function Home() {
 
       if (!response.ok) throw new Error(data.error);
 
-      setFileContent(data.content); // Salva o texto do arquivo no estado
+      setFileContent(data.content);
+      setSelectedFilePath(node.path);
     } catch (error: any) {
       console.error("Erro ao ler arquivo:", error);
       alert("Não foi possível ler o arquivo.");
@@ -89,6 +91,7 @@ export default function Home() {
           <PromptPreview
             selectedFolder={selectedFolder}
             fileContent={fileContent}
+            selectedFilePath={selectedFilePath}
           />
         </div>
       </div>
