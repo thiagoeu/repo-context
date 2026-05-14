@@ -6,11 +6,13 @@ import { FileNode } from "@/types/fileNode";
 interface FileExplorerProps {
   selectedFolder: FileNode | null;
   onFileSelect: (node: FileNode) => void;
+  selectedPaths: string[];
 }
 
 export default function FileExplorer({
   selectedFolder,
   onFileSelect,
+  selectedPaths,
 }: FileExplorerProps) {
   return (
     <div className="flex h-full min-h-0 flex-col gap-2">
@@ -20,7 +22,11 @@ export default function FileExplorer({
 
       <div className="flex-1 scrollbar-thin scrollbar-thumb-zinc-700 overflow-auto rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
         {selectedFolder ? (
-          <FileTree nodes={[selectedFolder]} onNodeClick={onFileSelect} />
+          <FileTree
+            nodes={[selectedFolder]}
+            onNodeClick={onFileSelect}
+            selectedPaths={selectedPaths}
+          />
         ) : (
           <div className="flex h-full flex-col items-center justify-center gap-2 text-zinc-500 italic">
             <span className="text-2xl">📂</span>

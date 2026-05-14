@@ -7,17 +7,20 @@ import type { FileNode } from "../types/fileNode";
 interface IFileTreeProps {
   nodes: FileNode[];
   onNodeClick: (node: FileNode) => void;
+  selectedPaths: string[]; // Agora obrigatório para controle visual
 }
 
-// 1. Adicionamos onNodeClick nas props do componente interno
 const FileTreeNode = ({
   node,
   onNodeClick,
+  selectedPaths,
 }: {
   node: FileNode;
   onNodeClick: (node: FileNode) => void;
+  selectedPaths: string[];
 }) => {
   const [isOpen, setIsOpen] = useState(true);
+  const isSelected = selectedPaths.includes(node.path);
 
   const hasChildren =
     node.type === "folder" && node.children && node.children.length > 0;
@@ -33,12 +36,11 @@ const FileTreeNode = ({
       <div
         className="group flex cursor-pointer items-center gap-1 rounded px-1.5 py-0.5 transition-colors duration-150 hover:bg-zinc-900"
         onClick={() => {
-          // 2. Se for pasta, alterna o estado de aberto/fechado
           if (node.type === "folder") {
             setIsOpen(!isOpen);
+          } else {
+            onNodeClick(node);
           }
-          // 3. Dispara a função de clique (que na Home vai buscar o arquivo)
-          onNodeClick(node);
         }}
       >
         <div className="flex h-4 w-4 items-center justify-center text-zinc-500">
@@ -51,6 +53,20 @@ const FileTreeNode = ({
           ) : null}
         </div>
 
+        {/* Checkbox para Arquivos */}
+        {node.type === "file" && (
+          <input
+            type="checkbox"
+            checked={isSelected}
+            readOnly
+            onClick={(e) => {
+              e.stopPropagation(); // Impede que o clique no input acione o onClick da div pai
+              onNodeClick(node);
+            }}
+            className="mr-1 h-3.5 w-3.5 rounded border-zinc-700 bg-zinc-800 accent-blue-500"
+          />
+        )}
+
         <div>
           {node.type === "folder" ? (
             <Folder className="h-4 w-4 text-amber-400" />
@@ -59,7 +75,11 @@ const FileTreeNode = ({
           )}
         </div>
 
-        <span className="font-mono text-[13px] text-zinc-300">{node.name}</span>
+        <span
+          className={`font-mono text-[13px] ${isSelected ? "font-medium text-blue-400" : "text-zinc-300"}`}
+        >
+          {node.name}
+        </span>
       </div>
 
       {isOpen && hasChildren && (
@@ -68,7 +88,8 @@ const FileTreeNode = ({
             <FileTreeNode
               key={`${child.path}-${index}`}
               node={child}
-              onNodeClick={onNodeClick} // 4. Passa a função recursivamente
+              onNodeClick={onNodeClick}
+              selectedPaths={selectedPaths} // RECURSÃO CORRIGIDA: Passando os paths selecionados
             />
           ))}
         </div>
@@ -77,7 +98,11 @@ const FileTreeNode = ({
   );
 };
 
-export default function FileTree({ nodes, onNodeClick }: IFileTreeProps) {
+export default function FileTree({
+  nodes,
+  onNodeClick,
+  selectedPaths,
+}: IFileTreeProps) {
   if (!nodes || nodes.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-zinc-800 bg-zinc-950 p-4 text-sm text-zinc-500 italic">
@@ -98,7 +123,8 @@ export default function FileTree({ nodes, onNodeClick }: IFileTreeProps) {
         <FileTreeNode
           key={`${node.path}-${index}`}
           node={node}
-          onNodeClick={onNodeClick} // 5. Inicia a passagem da função
+          onNodeClick={onNodeClick}
+          selectedPaths={selectedPaths}
         />
       ))}
     </div>
