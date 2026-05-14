@@ -1,12 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { cleanCode, treeToText } from "../utils/treeToText";
-import { FileNode } from "../types/fileNode";
 import { Hash, Zap } from "lucide-react";
-import { generatePrompt } from "@/utils/generatePrompt";
-import { generateStats } from "@/utils/generateStats";
-import { calculateSavings } from "@/utils/calculateSavings";
+
+import { FileNode } from "@/types/fileNode";
+import { usePromptPreview } from "@/hooks/usePromptPreview";
 
 interface PromptPreviewProps {
   selectedFiles: FileNode[];
@@ -17,41 +14,18 @@ export default function PromptPreview({
   selectedFiles,
   selectedFolder,
 }: PromptPreviewProps) {
-  const [copied, setCopied] = useState(false);
-  const [viewMode, setViewMode] = useState<"preview" | "optimized">(
-    "optimized",
-  );
-
-  const displayContent = useMemo(() => {
-    return generatePrompt({
-      selectedFiles,
-      selectedFolder,
-      viewMode,
-    });
-  }, [selectedFiles, selectedFolder, viewMode]);
-
-  const stats = useMemo(() => {
-    return generateStats({
-      content: displayContent,
-      fileCount: selectedFiles.length,
-    });
-  }, [displayContent, selectedFiles.length]);
-
-  const savings = useMemo(() => {
-    return calculateSavings(selectedFiles);
-  }, [selectedFiles]);
-
-  async function handleCopy() {
-    if (!displayContent) return;
-
-    try {
-      await navigator.clipboard.writeText(displayContent);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error("Erro ao copiar:", err);
-    }
-  }
+  const {
+    copied,
+    viewMode,
+    setViewMode,
+    displayContent,
+    stats,
+    savings,
+    handleCopy,
+  } = usePromptPreview({
+    selectedFiles,
+    selectedFolder,
+  });
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-3">
@@ -61,12 +35,12 @@ export default function PromptPreview({
             Prompt Preview
           </h2>
 
-          {/* Badges de Status */}
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-900/50 px-2 py-1 text-[10px] font-medium text-zinc-400">
               <Hash size={10} className="text-zinc-500" />
               <span>{stats.chars} chars</span>
             </div>
+
             <div className="flex items-center gap-1.5 rounded-md border border-blue-500/20 bg-blue-500/10 px-2 py-1 text-[10px] font-medium text-blue-400">
               <Zap size={10} />
               <span>~{stats.tokens} tokens</span>
@@ -87,6 +61,7 @@ export default function PromptPreview({
             >
               Otimizado
             </button>
+
             <button
               type="button"
               onClick={() => setViewMode("preview")}
@@ -127,13 +102,13 @@ export default function PromptPreview({
             {displayContent || (
               <div className="flex h-full flex-col items-center justify-center gap-2 text-zinc-600">
                 <span className="text-xl">📄</span>
+
                 <p className="text-sm italic">Nenhum arquivo selecionado</p>
               </div>
             )}
           </pre>
         </div>
 
-        {/* Integrated Savings Footer */}
         {savings && savings.percentage > 0 && (
           <div className="flex items-center justify-between border-t border-zinc-800/50 bg-zinc-900/20 px-4 py-2">
             <div className="flex items-center gap-2 text-[11px]">
@@ -141,11 +116,14 @@ export default function PromptPreview({
                 <Zap size={12} className="fill-emerald-400" />
                 {savings.percentage}% ECONOMIA
               </span>
+
               <span className="text-zinc-600">|</span>
+
               <span className="text-zinc-500 italic">
                 ~{savings.diff.toLocaleString()} tokens poupados
               </span>
             </div>
+
             <span className="text-[9px] font-bold tracking-tighter text-zinc-600 uppercase">
               AI Context Ready
             </span>

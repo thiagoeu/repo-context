@@ -1,37 +1,33 @@
 import { FileNode } from "@/types/fileNode";
-import { cleanCode, treeToText } from "./treeToText";
+import { ProcessedFile, treeToText } from "@/utils";
 
 export type ViewMode = "preview" | "optimized";
 
 interface GeneratePromptParams {
-  selectedFiles: FileNode[];
+  processedFiles: ProcessedFile[];
   selectedFolder: FileNode | null;
   viewMode: ViewMode;
 }
 
 export function generatePrompt({
-  selectedFiles,
+  processedFiles,
   selectedFolder,
   viewMode,
 }: GeneratePromptParams) {
-  if (selectedFiles.length === 0) {
+  if (processedFiles.length === 0) {
     return selectedFolder ? treeToText([selectedFolder]) : "";
   }
 
-  return selectedFiles
+  return processedFiles
     .map((file) => {
-      const content = file.content || "";
-
       if (viewMode === "optimized") {
-        const cleaned = cleanCode(content);
-
         return `<file path="${file.path}">
-${cleaned}
+${file.cleanedContent}
 </file>`;
       }
 
       return `--- FILE: ${file.path} ---
-${content}
+${file.originalContent}
 `;
     })
     .join("\n\n");

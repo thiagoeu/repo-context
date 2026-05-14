@@ -1,5 +1,4 @@
-import { FileNode } from "@/types/fileNode";
-import { cleanCode } from "./treeToText";
+import { ProcessedFile } from "@/utils";
 
 interface SavingsResult {
   percentage: number;
@@ -7,20 +6,18 @@ interface SavingsResult {
 }
 
 export function calculateSavings(
-  selectedFiles: FileNode[],
+  processedFiles: ProcessedFile[],
 ): SavingsResult | null {
-  if (selectedFiles.length === 0) {
+  if (processedFiles.length === 0) {
     return null;
   }
 
-  const normalChars = selectedFiles.reduce((acc, file) => {
-    return acc + (file.content?.length || 0) + 20;
+  const normalChars = processedFiles.reduce((acc, file) => {
+    return acc + file.originalContent.length + 20;
   }, 0);
 
-  const optimizedChars = selectedFiles.reduce((acc, file) => {
-    const cleaned = cleanCode(file.content || "");
-
-    return acc + cleaned.length + 30;
+  const optimizedChars = processedFiles.reduce((acc, file) => {
+    return acc + file.cleanedContent.length + 30;
   }, 0);
 
   const diff = normalChars - optimizedChars;
