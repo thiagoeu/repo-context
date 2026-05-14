@@ -71,6 +71,73 @@ export default function Home() {
     }
   }
 
+  function handleClearAll() {
+    setSelectedFiles([]);
+  }
+
+  async function handleSelectAll() {
+    if (!selectedFolder) return;
+
+    const allFiles: FileNode[] = [];
+    function traverse(node: FileNode) {
+      if (node.type === "file") {
+        allFiles.push(node);
+      } else if (node.children) {
+        node.children.forEach(traverse);
+      }
+    }
+    traverse(selectedFolder);
+
+    if (allFiles.length === 0) return;
+
+    setLoading(true);
+    try {
+      // Filtramos arquivos que já temos o conteúdo para evitar re-fetch desnecessário
+      const filesToFetch = allFiles.filter(
+        (f) => !selectedFiles.find((sf) => sf.path === f.path && sf.content),
+      );
+
+      const fetchedFiles = await Promise.all(
+        filesToFetch.map(async (file) => {
+          const response = await fetch("/api/file", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ filePath: file.path }),
+          });
+          const data = await response.json();
+          return { ...file, content: data.content };
+        }),
+      );
+
+      // Combinamos com os arquivos que já tínhamos selecionados ou que já tinham conteúdo
+      setSelectedFiles((prev) => {
+        const newFiles = [...prev];
+        allFiles.forEach((file) => {
+          const fetched = fetchedFiles.find((ff) => ff.path === file.path);
+          const alreadyExists = newFiles.find((nf) => nf.path === file.path);
+
+          if (fetched) {
+            if (alreadyExists) {
+              alreadyExists.content = fetched.content;
+            } else {
+              newFiles.push(fetched);
+            }
+          } else if (!alreadyExists) {
+            // Se não precisou de fetch mas não estava na lista, adicionamos o objeto do allFiles
+            // (assumindo que ele já tinha conteúdo ou será preenchido)
+            newFiles.push(file);
+          }
+        });
+        return newFiles;
+      });
+    } catch (error) {
+      console.error("Erro ao selecionar todos:", error);
+      alert("Erro ao carregar conteúdo de alguns arquivos.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const rootFolders = useMemo(() => {
     return tree.filter((node) => node.type === "folder");
   }, [tree]);
@@ -93,6 +160,8 @@ export default function Home() {
             selectedFolder={selectedFolder}
             onFileSelect={handleFileSelect}
             selectedPaths={selectedPaths}
+            onSelectAll={handleSelectAll}
+            onClearAll={handleClearAll}
           />
 
           {/* PromptPreview agora recebe a lista completa de objetos selecionados */}
