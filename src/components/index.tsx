@@ -4,3 +4,7 @@ export { default as PromptPreview } from "./PromptPreview";
 export { default as SearchBar } from "./SearchBar";
 export { default as FileTree } from "./FileTree";
 export { default as SavingsStats } from "./SavingsStats";
+export { default as PromptStats } from "./PromptStats";
+export { default as PromptModeToggle } from "./PromptModeToggle";
+export { default as CopyButton } from "./CopyButton";
+export { default as PromptContent } from "./PromptContent";
