@@ -34,8 +34,10 @@ export default function Home() {
       setTree(data);
       const firstFolder = data.find((node: FileNode) => node.type === "folder");
       setSelectedFolder(firstFolder || null);
-    } catch (error: any) {
-      alert(error.message);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Erro desconhecido";
+      alert(message);
     } finally {
       setLoading(false);
     }
@@ -60,7 +62,7 @@ export default function Home() {
 
       const fileWithContent = { ...node, content: data.content };
       setSelectedFiles((prev) => [...prev, fileWithContent]);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Erro ao ler arquivo:", error);
       alert("Não foi possível ler o arquivo.");
     }

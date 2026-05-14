@@ -29,8 +29,11 @@ export default function SavingsStats({ selectedFiles }: SavingsStatsProps) {
     const optimizedChars = optimizedText.length;
 
     const savedChars = normalChars - optimizedChars;
-    const percentage = normalChars > 0 ? Math.max(0, Math.round((savedChars / normalChars) * 100)) : 0;
-    
+    const percentage =
+      normalChars > 0
+        ? Math.max(0, Math.round((savedChars / normalChars) * 100))
+        : 0;
+
     // Estimativa de tokens (1 token ~ 4 chars)
     const savedTokens = Math.ceil(savedChars / 4);
 
@@ -44,24 +47,30 @@ export default function SavingsStats({ selectedFiles }: SavingsStatsProps) {
   if (!savings || selectedFiles.length === 0) return null;
 
   return (
-    <div className="mt-4 flex animate-in fade-in slide-in-from-bottom-1 duration-400 items-center gap-4 rounded-xl border border-zinc-800 bg-zinc-900/30 px-5 py-3 text-zinc-400">
+    <div className="animate-in fade-in slide-in-from-bottom-1 mt-4 flex items-center gap-4 rounded-xl border border-zinc-800 bg-zinc-900/30 px-5 py-3 text-zinc-400 duration-400">
       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
         <TrendingDown size={18} />
       </div>
-      
+
       <div className="flex-1">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-zinc-100">{savings.percentage}% de economia</span>
-          <span className="text-[10px] font-medium text-zinc-500 bg-zinc-800/50 px-1.5 py-0.5 rounded border border-zinc-700/50">
+          <span className="text-sm font-semibold text-zinc-100">
+            {savings.percentage}% de economia
+          </span>
+          <span className="rounded border border-zinc-700/50 bg-zinc-800/50 px-1.5 py-0.5 text-[10px] font-medium text-zinc-500">
             MODO OTIMIZADO ATIVO
           </span>
         </div>
         <p className="text-xs text-zinc-500">
-          Você está poupando <span className="text-blue-400/80 font-medium">{savings.savedTokens.toLocaleString()} tokens</span> limpando comentários e espaços.
+          Você está poupando{" "}
+          <span className="font-medium text-blue-400/80">
+            {savings.savedTokens.toLocaleString()} tokens
+          </span>{" "}
+          limpando comentários e espaços.
         </p>
       </div>
 
-      <div className="hidden sm:flex items-center gap-2">
+      <div className="hidden items-center gap-2 sm:flex">
         <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold text-emerald-500">
           <Zap size={12} className="fill-emerald-500" />
           PRONTO
@@ -70,4 +79,3 @@ export default function SavingsStats({ selectedFiles }: SavingsStatsProps) {
     </div>
   );
 }
-

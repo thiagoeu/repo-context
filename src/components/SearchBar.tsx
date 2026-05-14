@@ -8,15 +8,12 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({ onScan, isLoading }: SearchBarProps) {
-  const [path, setPath] = useState("");
+  const [path, setPath] = useState("C:\\workspace\\RepoContext");
 
   useEffect(() => {
     const savedPath = localStorage.getItem("repo-path");
-
     if (savedPath) {
       setPath(savedPath);
-    } else {
-      setPath("C:\\workspace\\RepoContext");
     }
   }, []);
 

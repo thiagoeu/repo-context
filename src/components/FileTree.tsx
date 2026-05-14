@@ -89,7 +89,7 @@ const FileTreeNode = ({
               key={`${child.path}-${index}`}
               node={child}
               onNodeClick={onNodeClick}
-              selectedPaths={selectedPaths} // RECURSÃO CORRIGIDA: Passando os paths selecionados
+              selectedPaths={selectedPaths}
             />
           ))}
         </div>
