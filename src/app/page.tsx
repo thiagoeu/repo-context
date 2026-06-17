@@ -10,6 +10,8 @@ import {
 import { FileNode } from "@/types/fileNode";
 
 export default function Home() {
+  const [documentation, setDocumentation] = useState<string>("");
+  const [generatingDoc, setGeneratingDoc] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tree, setTree] = useState<FileNode[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<FileNode | null>(null);
