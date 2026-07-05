@@ -317,14 +317,6 @@ npm start -- -p 3001
 4. **Push para branch** (`git push origin feature/nova-funcionalidade`)
 5. **Abra um Pull Request**
 
-### Guia de Estilo
-
-- Use **TypeScript** para todo código novo
-- Siga o **eslint** configurado
-- Use **Prettier** para formatação
-- Escreva **comentários** em português ou inglês
-- Mantenha o **design** consistente
-
 ---
 
 ## 🐛 Reportando Problemas
@@ -345,7 +337,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ---
 
-## 👥 Autores
+## 👥 Autor
 
 - **Thiago Barbosa** - _Desenvolvimento Inicial_ - [@thiagoeu](https://github.com/thiagoeu)
 
