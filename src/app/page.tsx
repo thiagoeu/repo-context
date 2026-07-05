@@ -149,7 +149,7 @@ export default function Home() {
           onSelectFolder={setSelectedFolder}
         />
 
-        <div className="mt-6 grid h-[calc(100vh-320px)] min-h-[500px] grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="mt-6 grid h-[calc(100vh-320px)] min-h-125 grid-cols-1 gap-6 md:grid-cols-2">
           <FileExplorer
             selectedFolder={selectedFolder}
             onFileSelect={handleFileSelect}

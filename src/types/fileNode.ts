@@ -7,6 +7,9 @@ export interface FileNode {
 }
 
 export const ignoredFolders = [
+  "assets",
+  "__pycache__",
+  ".venv",
   "node_modules",
   "package-lock.json",
   ".git",

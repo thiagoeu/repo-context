@@ -1,6 +1,8 @@
 "use client";
 
 import { X } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface DocumentationPanelProps {
   docs: Map<string, string>;
@@ -17,8 +19,8 @@ export default function DocumentationPanel({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-      <div className="relative flex max-h-[90vh] w-full max-w-4xl flex-col rounded-xl border border-zinc-700 bg-zinc-900 shadow-2xl">
-        {/* Cabeçalho - fixo */}
+      <div className="relative max-h-[80vh] w-full max-w-4xl overflow-hidden rounded-xl border border-zinc-700 bg-zinc-900 shadow-2xl">
+        {/* Cabeçalho */}
         <div className="flex items-center justify-between border-b border-zinc-800 px-6 py-4">
           <h3 className="text-lg font-bold text-zinc-100">
             📄 Documentação Gerada
@@ -31,15 +33,17 @@ export default function DocumentationPanel({
           </button>
         </div>
 
-        {/* Conteúdo - scrollável */}
-        <div className="flex-1 overflow-y-auto p-6">
+        {/* Conteúdo com scroll */}
+        <div className="max-h-[calc(80vh-100px)] overflow-y-auto p-6">
           {Array.from(docs.entries()).map(([path, content]) => (
             <div key={path} className="mb-6 last:mb-0">
               <div className="mb-2 text-sm font-semibold text-blue-400">
                 {path}
               </div>
-              <div className="rounded-lg bg-zinc-800/50 p-4 font-mono text-sm leading-relaxed whitespace-pre-wrap text-zinc-300">
-                {content || "⚠️ Documentação vazia"}
+              <div className="prose prose-invert max-w-none rounded-lg bg-zinc-800/50 p-4 text-sm leading-relaxed text-zinc-300">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {content}
+                </ReactMarkdown>
               </div>
             </div>
           ))}

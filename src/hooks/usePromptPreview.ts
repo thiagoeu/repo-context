@@ -49,10 +49,25 @@ export function usePromptPreview({
     if (!displayContent) return;
 
     try {
+      // Tenta Clipboard API
       await navigator.clipboard.writeText(displayContent);
       setCopied(true);
-    } catch (err) {
-      console.error("Erro ao copiar:", err);
+    } catch {
+      // Fallback: textarea
+      const textArea = document.createElement("textarea");
+      textArea.value = displayContent;
+      textArea.style.cssText =
+        "position:fixed;left:-9999px;top:-9999px;opacity:0;";
+      document.body.appendChild(textArea);
+      textArea.select();
+      const success = document.execCommand("copy");
+      document.body.removeChild(textArea);
+
+      if (success) {
+        setCopied(true);
+      } else {
+        alert("Não foi possível copiar. Selecione manualmente.");
+      }
     }
   }
 
