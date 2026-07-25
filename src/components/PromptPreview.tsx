@@ -53,7 +53,7 @@ export default function PromptPreview({
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-3">
-      <div className="flex min-h-[38px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-h-9.5 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="text-sm font-semibold tracking-tight text-zinc-200">
             Prompt Preview

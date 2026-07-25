@@ -8,3 +8,4 @@ export { default as PromptStats } from "./PromptStats";
 export { default as PromptModeToggle } from "./PromptModeToggle";
 export { default as CopyButton } from "./CopyButton";
 export { default as PromptContent } from "./PromptContent";
+export { default as DocumentationPanel } from "./DocumentationPanel";

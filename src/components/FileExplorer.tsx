@@ -2,12 +2,12 @@
 
 import FileTree from "@/components/FileTree";
 import { FileNode } from "@/types/fileNode";
-
 import { CheckSquare, Trash2 } from "lucide-react";
 
 interface FileExplorerProps {
   selectedFolder: FileNode | null;
   onFileSelect: (node: FileNode) => void;
+  onFolderToggle: (node: FileNode, checked: boolean) => void; // NOVA
   selectedPaths: string[];
   onSelectAll: () => void;
   onClearAll: () => void;
@@ -16,13 +16,14 @@ interface FileExplorerProps {
 export default function FileExplorer({
   selectedFolder,
   onFileSelect,
+  onFolderToggle,
   selectedPaths,
   onSelectAll,
   onClearAll,
 }: FileExplorerProps) {
   return (
     <div className="flex h-full min-h-0 flex-col gap-3">
-      <div className="flex h-[38px] items-center justify-between">
+      <div className="flex h-9.5 items-center justify-between">
         <h2 className="text-sm font-semibold tracking-tight text-zinc-200">
           Explorer
         </h2>
@@ -57,6 +58,7 @@ export default function FileExplorer({
           <FileTree
             nodes={[selectedFolder]}
             onNodeClick={onFileSelect}
+            onFolderToggle={onFolderToggle} // repassando
             selectedPaths={selectedPaths}
           />
         ) : (

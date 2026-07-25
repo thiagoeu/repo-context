@@ -70,6 +70,85 @@ export default function Home() {
     }
   }
 
+  // Função que manipula o toggle do checkbox da pasta
+  async function handleFolderToggle(folderNode: FileNode, checked: boolean) {
+    // Coleta todos os arquivos (nós do tipo file) dentro da pasta (recursivamente)
+    const allFileNodes: FileNode[] = [];
+    function collect(node: FileNode) {
+      if (node.type === "file") {
+        allFileNodes.push(node);
+      } else if (node.children) {
+        node.children.forEach(collect);
+      }
+    }
+    collect(folderNode);
+
+    if (checked) {
+      // Selecionar todos os arquivos da pasta
+      // Filtra os arquivos que já estão selecionados com conteúdo
+      const filesToFetch = allFileNodes.filter(
+        (f) => !selectedFiles.some((sf) => sf.path === f.path && sf.content),
+      );
+
+      if (filesToFetch.length === 0) {
+        // Se todos já estão selecionados, não faz nada
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const fetchedFiles = await Promise.all(
+          filesToFetch.map(async (file) => {
+            const response = await fetch("/api/file", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ filePath: file.path }),
+            });
+            const data = await response.json();
+            return { ...file, content: data.content };
+          }),
+        );
+
+        setSelectedFiles((prev) => {
+          const novos = [...prev];
+          // Adiciona os arquivos buscados
+          fetchedFiles.forEach((f) => {
+            const exists = novos.find((nf) => nf.path === f.path);
+            if (exists) {
+              exists.content = f.content;
+            } else {
+              novos.push(f);
+            }
+          });
+          // Adiciona os arquivos que já estavam selecionados (com conteúdo) e que não foram buscados
+          allFileNodes.forEach((f) => {
+            if (!novos.find((nf) => nf.path === f.path)) {
+              const existing = prev.find((p) => p.path === f.path);
+              if (existing && existing.content) {
+                novos.push(existing);
+              } else {
+                // Caso raro: se não tem conteúdo, buscamos? Mas teoricamente todos os que faltavam foram buscados.
+                console.warn("Arquivo sem conteúdo:", f.path);
+              }
+            }
+          });
+          return novos;
+        });
+      } catch (error) {
+        console.error("Erro ao selecionar todos da pasta:", error);
+        alert("Erro ao carregar conteúdo de alguns arquivos.");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Desmarcar: remover todos os arquivos da pasta
+      const pathsToRemove = new Set(allFileNodes.map((f) => f.path));
+      setSelectedFiles((prev) =>
+        prev.filter((f) => !pathsToRemove.has(f.path)),
+      );
+    }
+  }
+
   function handleClearAll() {
     setSelectedFiles([]);
   }
@@ -153,6 +232,7 @@ export default function Home() {
           <FileExplorer
             selectedFolder={selectedFolder}
             onFileSelect={handleFileSelect}
+            onFolderToggle={handleFolderToggle} // <-- NOVA PROP
             selectedPaths={selectedPaths}
             onSelectAll={handleSelectAll}
             onClearAll={handleClearAll}

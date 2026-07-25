@@ -7,6 +7,7 @@ export interface FileNode {
 }
 
 export const ignoredFolders = [
+  ".turbo",
   "assets",
   "__pycache__",
   ".venv",

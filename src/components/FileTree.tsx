@@ -1,26 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ChevronRight, ChevronDown, File, Folder } from "lucide-react";
 import type { FileNode } from "../types/fileNode";
 
 interface IFileTreeProps {
   nodes: FileNode[];
   onNodeClick: (node: FileNode) => void;
-  selectedPaths: string[]; // Agora obrigatório para controle visual
+  onFolderToggle: (node: FileNode, checked: boolean) => void; // NOVA
+  selectedPaths: string[];
 }
 
 const FileTreeNode = ({
   node,
   onNodeClick,
+  onFolderToggle,
   selectedPaths,
 }: {
   node: FileNode;
   onNodeClick: (node: FileNode) => void;
+  onFolderToggle: (node: FileNode, checked: boolean) => void;
   selectedPaths: string[];
 }) => {
   const [isOpen, setIsOpen] = useState(true);
+
+  // Verifica se o arquivo está selecionado
   const isSelected = selectedPaths.includes(node.path);
+
+  // Verifica se todos os arquivos da pasta estão selecionados (para o checkbox da pasta)
+  const isFolderFullySelected = useMemo(() => {
+    if (node.type !== "folder") return false;
+    const allFiles: string[] = [];
+    const collectPaths = (n: FileNode) => {
+      if (n.type === "file") allFiles.push(n.path);
+      else if (n.children) n.children.forEach(collectPaths);
+    };
+    collectPaths(node);
+    if (allFiles.length === 0) return false;
+    return allFiles.every((p) => selectedPaths.includes(p));
+  }, [node, selectedPaths]);
 
   const hasChildren =
     node.type === "folder" && node.children && node.children.length > 0;
@@ -30,6 +48,11 @@ const FileTreeNode = ({
     if (a.type === "file" && b.type === "folder") return 1;
     return a.name.localeCompare(b.name);
   });
+
+  const handleFolderCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    onFolderToggle(node, e.target.checked);
+  };
 
   return (
     <div className="select-none">
@@ -43,6 +66,7 @@ const FileTreeNode = ({
           }
         }}
       >
+        {/* Ícone de expandir/recolher */}
         <div className="flex h-4 w-4 items-center justify-center text-zinc-500">
           {node.type === "folder" ? (
             isOpen ? (
@@ -53,14 +77,25 @@ const FileTreeNode = ({
           ) : null}
         </div>
 
-        {/* Checkbox para Arquivos */}
+        {/* Checkbox para PASTAS */}
+        {node.type === "folder" && (
+          <input
+            type="checkbox"
+            checked={isFolderFullySelected}
+            onChange={handleFolderCheck}
+            onClick={(e) => e.stopPropagation()}
+            className="mr-1 h-3.5 w-3.5 rounded border-zinc-700 bg-zinc-800 accent-blue-500"
+          />
+        )}
+
+        {/* Checkbox para ARQUIVOS */}
         {node.type === "file" && (
           <input
             type="checkbox"
             checked={isSelected}
             readOnly
             onClick={(e) => {
-              e.stopPropagation(); // Impede que o clique no input acione o onClick da div pai
+              e.stopPropagation();
               onNodeClick(node);
             }}
             className="mr-1 h-3.5 w-3.5 rounded border-zinc-700 bg-zinc-800 accent-blue-500"
@@ -84,11 +119,12 @@ const FileTreeNode = ({
 
       {isOpen && hasChildren && (
         <div className="ml-3 border-l border-zinc-800 pl-2">
-          {sortedChildren.map((child, index) => (
+          {sortedChildren.map((child) => (
             <FileTreeNode
-              key={`${child.path}-${index}`}
+              key={child.path}
               node={child}
               onNodeClick={onNodeClick}
+              onFolderToggle={onFolderToggle}
               selectedPaths={selectedPaths}
             />
           ))}
@@ -101,6 +137,7 @@ const FileTreeNode = ({
 export default function FileTree({
   nodes,
   onNodeClick,
+  onFolderToggle,
   selectedPaths,
 }: IFileTreeProps) {
   if (!nodes || nodes.length === 0) {
@@ -119,11 +156,12 @@ export default function FileTree({
 
   return (
     <div className="space-y-0.5 overflow-auto rounded-lg border border-zinc-800 bg-zinc-950 p-3">
-      {sortedNodes.map((node, index) => (
+      {sortedNodes.map((node) => (
         <FileTreeNode
-          key={`${node.path}-${index}`}
+          key={node.path}
           node={node}
           onNodeClick={onNodeClick}
+          onFolderToggle={onFolderToggle}
           selectedPaths={selectedPaths}
         />
       ))}
