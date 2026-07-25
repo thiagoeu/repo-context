@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { askModel } from "@/doc-agent/shared/providers/ollama";
-import { buildSystemPrompt } from "@/doc-agent/prompt";
-import { toolsDefinition, lerArquivoLocal } from "@/doc-agent/tools";
-import type { Message } from "@/doc-agent/shared/types/message";
+import { askModel } from "@/agents/shared/providers/ollama";
+import { buildDocumentationPrompt } from "@/agents/documentation/prompt";
+import { documentationToolsDefinition, lerArquivoLocal } from "@/agents/documentation/tools";
+import type { Message } from "@/agents/shared/types/message";
+
 
 export async function POST(request: Request) {
   try {
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
 
     // 1. Mensagem inicial
     const messages: Message[] = [
-      { role: "system", content: buildSystemPrompt() },
+      { role: "system", content: buildDocumentationPrompt() },
       { role: "user", content: `Por favor, documente o arquivo: ${filePath}` },
     ];
 
@@ -28,7 +29,7 @@ export async function POST(request: Request) {
       messages,
       options: {
         temperature: 0.2,
-        tools: toolsDefinition,
+        tools: documentationToolsDefinition,
         numPredict: 1000,
       },
     });

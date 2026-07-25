@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
+import { readFileContent } from "@/services/filesystem";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,13 +12,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!fs.existsSync(filePath)) {
+    const content = readFileContent(filePath);
+
+    if (content === null) {
       return NextResponse.json(
         { error: "Arquivo não encontrado" },
         { status: 404 },
       );
     }
-    const content = fs.readFileSync(filePath, "utf-8");
 
     return NextResponse.json({ content });
   } catch (error) {
