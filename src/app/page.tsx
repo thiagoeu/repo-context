@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { FolderTabs, PromptPreview, SearchBar, FileExplorer } from "@/components";
+import { FolderTabs, SearchBar, FileExplorer } from "@/features/file-explorer";
 import { useFileExplorer } from "@/features/file-explorer";
+
 import { GraphPanel } from "@/features/code-graph";
 import { GitBranch, FileText } from "lucide-react";
+import { PromptPreview } from "../features/prompt-preview/components";
 
 type MainTab = "prompt" | "graph";
 
@@ -79,7 +81,7 @@ export default function Home() {
             onClearAll={handleClearAll}
           />
 
-          <div className="min-h-0 h-full">
+          <div className="h-full min-h-0">
             {activeTab === "prompt" && (
               <PromptPreview
                 selectedFiles={selectedFiles}

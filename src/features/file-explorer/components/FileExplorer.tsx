@@ -1,6 +1,6 @@
 "use client";
 
-import FileTree from "@/components/FileTree";
+import FileTree from "@/features/file-explorer/components/FileTree";
 import { FileNode } from "@/types/fileNode";
 import { CheckSquare, Trash2 } from "lucide-react";
 

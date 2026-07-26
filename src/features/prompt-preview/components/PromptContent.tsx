@@ -1,6 +1,6 @@
 import { ViewMode } from "@/utils/generatePrompt";
 
-import PromptFooter from "@/components/PromptFooter";
+import PromptFooter from "@/features/prompt-preview/components/PromptFooter";
 
 interface PromptContentProps {
   viewMode: ViewMode;

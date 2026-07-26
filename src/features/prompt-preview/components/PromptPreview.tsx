@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { FileNode } from "@/types/fileNode";
-import { useDocumentation } from "@/hooks/useDocumentation";
-import { usePromptPreview } from "@/hooks/usePromptPreview";
-import DocumentationPanel from "@/components/DocumentationPanel";
+import { useDocumentation } from "@/features/documentation/hooks/useDocumentation";
+import { usePromptPreview } from "@/features/prompt-preview/hooks/usePromptPreview";
+import DocumentationPanel from "@/features/documentation/components/DocumentationPanel";
 import {
   PromptStats,
   PromptModeToggle,
   CopyButton,
   PromptContent,
-} from "@/components";
+} from "@/features/prompt-preview/components";
 
 interface PromptPreviewProps {
   selectedFiles: FileNode[];

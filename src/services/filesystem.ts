@@ -6,6 +6,7 @@ import { FileNode, ignoredFolders } from "@/types/fileNode";
  * Escaneia recursivamente um diretório e retorna uma árvore de FileNodes.
  * Ignora automaticamente pastas configuradas em `ignoredFolders`.
  */
+
 export function scanDirectory(dirPath: string): FileNode[] {
   const entries = fs.readdirSync(dirPath, { withFileTypes: true });
   const nodes: FileNode[] = [];

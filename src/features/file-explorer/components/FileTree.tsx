@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { ChevronRight, ChevronDown, File, Folder } from "lucide-react";
-import type { FileNode } from "../types/fileNode";
+import type { FileNode } from "../../../types/fileNode";
 
 interface IFileTreeProps {
   nodes: FileNode[];
