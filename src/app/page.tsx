@@ -7,6 +7,7 @@ import { useFileExplorer } from "@/features/file-explorer";
 import { GraphPanel } from "@/features/code-graph";
 import { GitBranch, FileText } from "lucide-react";
 import { PromptPreview } from "../features/prompt-preview/components";
+import { ChatWidget } from "@/features/rag";
 
 type MainTab = "prompt" | "graph";
 
@@ -93,6 +94,7 @@ export default function Home() {
             )}
           </div>
         </div>
+        <ChatWidget selectedFiles={selectedFiles} />
       </div>
     </main>
   );

@@ -4,6 +4,7 @@ import { FileNode } from "@/types/fileNode";
 import { useCodeGraph } from "../hooks/useCodeGraph";
 import GraphView from "./GraphView";
 import { GitBranch, RefreshCw, Trash2, AlertCircle } from "lucide-react";
+import Link from "next/link";
 
 interface GraphPanelProps {
   selectedFiles: FileNode[];
@@ -46,7 +47,7 @@ export default function GraphPanel({ selectedFiles }: GraphPanelProps) {
           <button
             onClick={() => analyze(selectedFiles)}
             disabled={isAnalyzing || filesWithContent.length === 0}
-            className="flex items-center gap-1.5 rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-purple-500 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isAnalyzing ? (
               <>
@@ -60,6 +61,13 @@ export default function GraphPanel({ selectedFiles }: GraphPanelProps) {
               </>
             )}
           </button>
+          {graphData && (
+            <Link href="/graph" target="_blank">
+              <button className="flex items-center gap-1.5 rounded-lg border border-zinc-700 px-3 py-1.5 text-xs font-bold text-zinc-300 transition hover:bg-zinc-800">
+                <span>🔍</span> Tela Cheia
+              </button>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -101,7 +109,7 @@ export default function GraphPanel({ selectedFiles }: GraphPanelProps) {
             {filesWithContent.length > 0 && (
               <button
                 onClick={() => analyze(selectedFiles)}
-                className="mt-1 flex items-center gap-2 rounded-lg bg-purple-600/20 border border-purple-500/30 px-4 py-2 text-sm font-medium text-purple-400 transition hover:bg-purple-600/30 hover:text-purple-300"
+                className="mt-1 flex items-center gap-2 rounded-lg border border-purple-500/30 bg-purple-600/20 px-4 py-2 text-sm font-medium text-purple-400 transition hover:bg-purple-600/30 hover:text-purple-300"
               >
                 <GitBranch size={14} />
                 Gerar Grafo
@@ -110,9 +118,7 @@ export default function GraphPanel({ selectedFiles }: GraphPanelProps) {
           </div>
         )}
 
-        {!isAnalyzing && !error && graphData && (
-          <GraphView data={graphData} />
-        )}
+        {!isAnalyzing && !error && graphData && <GraphView data={graphData} />}
       </div>
     </div>
   );

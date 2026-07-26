@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { FileNode } from "@/types/fileNode";
 import type { GraphData } from "@/agents/graph/tools";
-
+const GRAPH_STORAGE_KEY = "repo-context:graph-data";
 interface UseCodeGraphReturn {
   graphData: GraphData | null;
   isAnalyzing: boolean;
@@ -47,6 +47,7 @@ export function useCodeGraph(): UseCodeGraphReturn {
       }
 
       setGraphData(data);
+      localStorage.setItem(GRAPH_STORAGE_KEY, JSON.stringify(data));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro desconhecido.");
     } finally {
@@ -57,6 +58,7 @@ export function useCodeGraph(): UseCodeGraphReturn {
   function clear() {
     setGraphData(null);
     setError(null);
+    localStorage.removeItem(GRAPH_STORAGE_KEY);
   }
 
   return { graphData, isAnalyzing, error, analyze, clear };
