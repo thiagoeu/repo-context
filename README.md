@@ -1,9 +1,3 @@
-# 📚 Documentação do RepoContext
-
-Vou criar uma documentação completa e profissional para seu projeto, incluindo instruções de instalação, uso e contribuição.
-
-## 📄 README.md Completo
-
 # RepoContext
 
 > Ferramenta inteligente para preparação e otimização de contexto de repositórios para modelos de linguagem (LLMs)
@@ -20,7 +14,7 @@ Vou criar uma documentação completa e profissional para seu projeto, incluindo
 
 O **RepoContext** é uma ferramenta voltada para desenvolvedores que desejam preparar, organizar e otimizar o contexto de repositórios para utilização com modelos de linguagem (LLMs), como ChatGPT, Claude, Gemini e ferramentas de IA para desenvolvimento de software.
 
-A aplicação permite abrir um repositório local, visualizar sua estrutura de arquivos, selecionar partes relevantes do projeto e gerar automaticamente um prompt estruturado e otimizado para IA.
+A aplicação permite abrir um repositório local, visualizar sua estrutura de arquivos, selecionar partes relevantes do projeto e gerar automaticamente um prompt estruturado e otimizado para IA. Além disso, conta com **análise de grafos de dependência**, **documentação automatizada via Ollama** e **consulta inteligente via RAG**.
 
 ---
 
@@ -64,6 +58,23 @@ Trabalhar com IA em projetos de software apresenta diversos desafios:
 - **Suporte a ferramentas** para leitura de arquivos
 - **Documentação detalhada** com propósito, funções e exemplos
 
+### 🔗 Code Graph (Grafo de Dependências)
+
+- **Análise estática** de código-fonte para extrair funções, classes, componentes e hooks
+- **Mapa de dependências** entre arquivos via detecção de imports
+- **Visualização interativa** do grafo (nós e arestas)
+- **Detecção automática** de chamadas de função entre módulos
+- Página dedicada em `/graph`
+
+### 🧠 RAG (Retrieval-Augmented Generation)
+
+- **Chunking inteligente** de arquivos de código para indexação
+- **Geração de embeddings** locais para busca semântica
+- **Similaridade por cosseno** para encontrar contextos relevantes
+- **Vector store** para consultas rápidas
+- **Chat interativo** com IA sobre o código do repositório
+- **API dedicada** para consultas RAG
+
 ### 🎨 Interface
 
 - **Design moderno** com tema escuro
@@ -96,7 +107,6 @@ yarn install
 
 # Ou com pnpm
 pnpm install
-
 ```
 
 ### Configuração
@@ -132,6 +142,13 @@ npm start
 
 Acesse: `http://localhost:3000`
 
+### Páginas
+
+| Rota     | Descrição                                         |
+| -------- | ------------------------------------------------- |
+| `/`      | Página principal (file explorer + prompt preview) |
+| `/graph` | Visualização do grafo de dependências             |
+
 ### Documentação com IA (Ollama)
 
 Para usar a funcionalidade de documentação automática:
@@ -159,51 +176,100 @@ Para usar a funcionalidade de documentação automática:
 ```
 repo-context/
 ├── src/
-│   ├── app/
-│   │   ├── api/
-│   │   │   ├── document/          # API para documentação com IA
-│   │   │   ├── file/              # API para leitura de arquivos
-│   │   │   └── tree/              # API para escaneamento de diretórios
-│   │   ├── globals.css            # Estilos globais
-│   │   ├── layout.tsx             # Layout principal
-│   │   └── page.tsx               # Página inicial
-│   ├── components/
-│   │   ├── CopyButton.tsx         # Botão de cópia com feedback
-│   │   ├── DocumentationPanel.tsx # Painel de documentação gerada
-│   │   ├── FileExplorer.tsx       # Explorador de arquivos
-│   │   ├── FileTree.tsx           # Árvore de arquivos interativa
-│   │   ├── FolderTabs.tsx         # Tabs de pastas
-│   │   ├── PromptContent.tsx      # Conteúdo do prompt
-│   │   ├── PromptFooter.tsx       # Rodapé com estatísticas
-│   │   ├── PromptModeToggle.tsx   # Toggle entre modos
-│   │   ├── PromptPreview.tsx      # Preview do prompt
-│   │   ├── PromptStats.tsx        # Estatísticas do prompt
-│   │   ├── SavingsStats.tsx       # Estatísticas de economia
-│   │   └── SearchBar.tsx          # Barra de pesquisa
-│   ├── doc-agent/                 # Agente de documentação
-│   │   ├── index.ts               # Ponto de entrada do agente
-│   │   ├── prompt.ts              # Sistema de prompt
-│   │   ├── tools.ts               # Ferramentas do agente
-│   │   └── shared/                # Código compartilhado
-│   ├── hooks/
-│   │   ├── useDocumentation.ts    # Hook para documentação
-│   │   └── usePromptPreview.ts    # Hook para preview do prompt
-│   ├── types/
-│   │   └── fileNode.ts            # Tipos de arquivos
-│   └── utils/
-│       ├── calculateSavings.ts    # Cálculo de economia
-│       ├── generatePrompt.ts      # Gerador de prompts
-│       ├── generateStats.ts       # Gerador de estatísticas
-│       ├── processFiles.ts        # Processador de arquivos
-│       └── treeToText.ts          # Conversor de árvore para texto
+│   ├── agents/                          # Agentes de IA
+│   │   ├── documentation/               # Agente de documentação
+│   │   │   ├── index.ts                 # Ponto de entrada do agente
+│   │   │   ├── prompt.ts                # Sistema de prompt
+│   │   │   └── tools.ts                 # Ferramentas do agente
+│   │   ├── graph/                       # Agente de grafo de dependências
+│   │   │   ├── prompt.ts                # Prompt para análise de grafo
+│   │   │   └── tools.ts                 # Extração de nós e arestas (AST simplificado)
+│   │   └── shared/                      # Código compartilhado entre agentes
+│   │       ├── providers/
+│   │       │   └── ollama.ts            # Provider Ollama
+│   │       └── types/                   # Tipos compartilhados
+│   │           ├── askModelOptions.ts
+│   │           ├── askModelParams.ts
+│   │           └── message.ts
+│   ├── app/                             # Rotas Next.js (App Router)
+│   │   ├── api/                         # Rotas de API
+│   │   │   ├── document/                # POST /api/document - Geração de documentação
+│   │   │   ├── file/                    # POST /api/file - Leitura de arquivos
+│   │   │   ├── graph/                   # POST /api/graph - Análise de grafo
+│   │   │   ├── rag/                     # POST /api/rag - Consulta RAG
+│   │   │   ├── test-embedding/          # POST /api/test-embedding - Teste de embeddings
+│   │   │   └── tree/                    # POST /api/tree - Escaneamento de diretórios
+│   │   ├── graph/                       # Página /graph
+│   │   │   └── page.tsx                 # Visualização do grafo de dependências
+│   │   ├── globals.css                  # Estilos globais
+│   │   ├── layout.tsx                   # Layout principal
+│   │   └── page.tsx                     # Página inicial
+│   ├── features/                        # Features organizadas por domínio
+│   │   ├── code-graph/                  # Feature: Code Graph
+│   │   │   ├── index.ts                 # Re-exports
+│   │   │   ├── components/
+│   │   │   │   ├── GraphPanel.tsx       # Painel do grafo
+│   │   │   │   └── GraphView.tsx        # Visualização do grafo
+│   │   │   └── hooks/
+│   │   │       └── useCodeGraph.ts      # Hook do grafo
+│   │   ├── documentation/              # Feature: Documentação
+│   │   │   ├── index.ts                 # Re-exports
+│   │   │   ├── components/
+│   │   │   │   └── DocumentationPanel.tsx # Painel de documentação
+│   │   │   └── hooks/
+│   │   │       └── useDocumentation.ts  # Hook de documentação
+│   │   ├── file-explorer/              # Feature: Explorador de Arquivos
+│   │   │   ├── index.ts                 # Re-exports
+│   │   │   ├── components/
+│   │   │   │   ├── FileExplorer.tsx     # Explorador de arquivos
+│   │   │   │   ├── FileTree.tsx         # Árvore de arquivos interativa
+│   │   │   │   ├── FolderTabs.tsx       # Tabs de pastas
+│   │   │   │   └── SearchBar.tsx        # Barra de pesquisa
+│   │   │   └── hooks/
+│   │   │       └── useFileExplorer.ts   # Hook do explorador
+│   │   ├── prompt-preview/             # Feature: Preview do Prompt
+│   │   │   ├── components/
+│   │   │   │   ├── CopyButton.tsx       # Botão de cópia com feedback
+│   │   │   │   ├── PromptContent.tsx    # Conteúdo do prompt
+│   │   │   │   ├── PromptFooter.tsx     # Rodapé com estatísticas
+│   │   │   │   ├── PromptModeToggle.tsx # Toggle entre modos normal/otimizado
+│   │   │   │   ├── PromptPreview.tsx    # Preview do prompt
+│   │   │   │   ├── PromptStats.tsx      # Estatísticas do prompt
+│   │   │   │   ├── SavingsStats.tsx     # Estatísticas de economia
+│   │   │   │   └── index.ts            # Re-exports
+│   │   │   └── hooks/
+│   │   │       └── usePromptPreview.ts  # Hook do preview
+│   │   └── rag/                        # Feature: RAG
+│   │       ├── index.ts                 # Re-exports
+│   │       ├── components/
+│   │       │   └── ChatWidget.tsx       # Chat interativo com IA
+│   │       └── hooks/
+│   │           └── useRagChat.ts        # Hook do chat RAG
+│   ├── services/                        # Serviços
+│   │   ├── filesystem.ts               # Serviço de sistema de arquivos
+│   │   └── rag/                        # Serviços RAG
+│   │       ├── chunking.ts             # Chunking de código
+│   │       ├── embeddings.ts           # Geração de embeddings
+│   │       ├── similarity.ts           # Cálculo de similaridade (cosseno)
+│   │       └── vectorStore.ts          # Armazenamento de vetores
+│   ├── types/                           # Tipos TypeScript
+│   │   └── fileNode.ts                 # Tipos de nós de arquivo + pastas ignoradas
+│   └── utils/                           # Utilitários
+│       ├── buildTree.ts                # Construção de árvore de diretórios
+│       ├── calculateSavings.ts         # Cálculo de economia de tokens
+│       ├── generatePrompt.ts           # Gerador de prompts
+│       ├── generateStats.ts            # Gerador de estatísticas
+│       ├── index.ts                    # Re-exports
+│       ├── processFiles.ts             # Processador de arquivos
+│       └── treeToText.ts               # Conversor de árvore para texto
 ├── .gitignore
-├── eslint.config.mjs              # Configuração ESLint
-├── next.config.ts                 # Configuração Next.js
+├── eslint.config.mjs                   # Configuração ESLint
+├── next.config.ts                      # Configuração Next.js
 ├── package.json
-├── postcss.config.mjs             # Configuração PostCSS
-├── prettier.config.mjs            # Configuração Prettier
-├── readme.md                      # Este arquivo
-└── tsconfig.json                  # Configuração TypeScript
+├── postcss.config.mjs                  # Configuração PostCSS
+├── prettier.config.mjs                 # Configuração Prettier
+├── readme.md                           # Este arquivo
+└── tsconfig.json                       # Configuração TypeScript
 ```
 
 ---
@@ -226,7 +292,7 @@ export const ignoredFolders = [
 
 ### Alterando o Modelo Ollama
 
-Em `src/doc-agent/shared/providers/ollama.ts`:
+Em `src/agents/shared/providers/ollama.ts`:
 
 ```typescript
 const { model = "llama3.2" } = options; // Troque para seu modelo preferido
@@ -258,11 +324,17 @@ npm start -- -p 3001
 - **TypeScript 5.0** - Superset JavaScript
 - **Node.js** - Runtime
 
-### Documentação
+### Documentação & IA
 
 - **Ollama** - Modelos de linguagem locais
 - **React Markdown** - Renderização de Markdown
 - **Remark GFM** - Suporte a GitHub Flavored Markdown
+
+### Análise de Código
+
+- **Regex-based AST** - Extração de funções, classes, componentes e hooks
+- **Code Graph** - Mapeamento de dependências entre arquivos
+- **RAG** - Embeddings locais + similaridade por cosseno
 
 ---
 
@@ -292,18 +364,23 @@ npm start -- -p 3001
 - [x] Preview do prompt
 - [x] Cópia para clipboard
 - [x] Estatísticas de tokens
+- [x] Modo otimizado (remoção de comentários)
 
-### Fase 3 (Em andamento) 🚧
+### Fase 3 (Concluída) ✅
 
-- [ ] Parser de código (AST)
-- [ ] Dependency graph
+- [x] Parser de código (AST simplificado via regex)
+- [x] Dependency graph (Code Graph)
+- [x] Agente de documentação com Ollama
+- [x] Página `/graph` para visualização
+
+### Fase 4 (Em andamento) 🚧
+
+- [x] RAG (Retrieval-Augmented Generation)
+- [x] Embeddings locais
+- [x] Chat interativo com IA sobre o código
 - [ ] Contexto inteligente
-
-### Fase 4 (Futuro) 🔮
-
 - [ ] Agentes de IA autônomos
 - [ ] Análise automática de arquitetura
-- [ ] Geração de documentação automática
 - [ ] Plugin para VSCode
 - [ ] Aplicação desktop (Tauri)
 
@@ -340,8 +417,6 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 ## 👥 Autor
 
 - **Thiago Barbosa** - _Desenvolvimento Inicial_ - [@thiagoeu](https://github.com/thiagoeu)
-
----
 
 ---
 
