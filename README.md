@@ -1,9 +1,3 @@
-# 📚 Documentação do RepoContext
-
-Vou criar uma documentação completa e profissional para seu projeto, incluindo instruções de instalação, uso e contribuição.
-
-## 📄 README.md Completo
-
 # RepoContext
 
 > Ferramenta inteligente para preparação e otimização de contexto de repositórios para modelos de linguagem (LLMs)
